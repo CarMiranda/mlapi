@@ -7,9 +7,28 @@ stages:
       md5: 145de00f6e6053d3f7044628f9a5b5ff
       size: 3974474
     - path: starter/clean_data.py
-      md5: e933c8131400606f05012ff905487341
-      size: 679
+      md5: a4ba15b6e984d70d3d06435c71636bc1
+      size: 1009
     outs:
     - path: data/census_clean.csv
       md5: 12c208530a5680c15ae19b34152286dd
       size: 3518606
+  train:
+    cmd: python starter/train_model.py -i data/census_clean.csv -m model -M metrics
+    deps:
+    - path: data/census_clean.csv
+      md5: 12c208530a5680c15ae19b34152286dd
+      size: 3518606
+    - path: starter/train_model.py
+      md5: 47090db05dc0ddc6c0e9144ec95f6f1c
+      size: 3103
+    outs:
+    - path: metrics/test_metrics.json
+      md5: 3d6ea170766c9cd6e33f5f79e749755e
+      size: 92
+    - path: metrics/train_metrics.json
+      md5: f4c41c95c97047f64dd1a61c821d98ce
+      size: 76
+    - path: model/model.pkl
+      md5: 22827a56c70c23450946f18c11837d07
+      size: 66569080
