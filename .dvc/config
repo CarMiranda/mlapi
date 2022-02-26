@@ -1,6 +1,5 @@
 [core]
     autostage = true
-['remote "models"']
-    url = s3://mlapi-storage/models
-['remote "data"']
+    remote = mlapi-storage
+['remote "mlapi-storage"']
     url = s3://mlapi-storage/data
