@@ -40,7 +40,7 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     
     - name: Pull latest artifacts
-      run: dvc pull
+      run: dvc pull -r data && dvc pull -r models
         
     - name: Lint with flake8
       run: |
