@@ -2,7 +2,20 @@ stages:
   clean:
     cmd: python starter/clean_data.py -i data/census.csv -o data/census_clean.csv
     deps:
-    - data/census.csv
-    - starter/clean_data.py
+      - data/census.csv
+      - starter/clean_data.py
     outs:
-    - data/census_clean.csv
+      - data/census_clean.csv
+
+  train:
+    cmd: python starter/train_model.py -i data/census_clean.csv -m model -M metrics
+    deps:
+      - data/census_clean.csv
+      - starter/train_model.py
+    outs:
+      - model/model.pkl
+    metrics:
+      - metrics/train_metrics.json:
+          cache: false
+      - metrics/test_metrics.json:
+          cache: false
