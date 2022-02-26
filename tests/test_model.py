@@ -63,5 +63,20 @@ def test__full_train():
     assert len(list(metrics_dir.iterdir())) == 2
     assert len(list(model_dir.iterdir())) == 1
 
+    data_path.unlink()
     shutil.rmtree(metrics_dir)
     shutil.rmtree(model_dir)
+
+
+def test__save_load(training_preprocess):
+    x, y, encoder, lb = training_preprocess
+    model_path = pathlib.Path(tempfile.mkstemp()[1])
+
+    model = model_utils.train_model(x, y)
+    preds = model_utils.inference(model, x)
+    model_utils.save(model, model_path)
+
+    _model = model_utils.load(model_path)
+    _preds = model_utils.inference(_model, x)
+
+    assert np.allclose(preds, _preds)

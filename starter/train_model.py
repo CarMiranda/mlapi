@@ -84,24 +84,29 @@ def train(data_path: pathlib.Path, model_dir: pathlib.Path, metrics_dir: pathlib
     preds_train = model_utils.inference(model, X_train)
     metrics_train = model_utils.compute_model_metrics(y_train, preds_train)
     with open(metrics_dir / "train_metrics.json", "w") as fp:
-        json.dump({
-            "precision": metrics_train[0],
-            "recall": metrics_train[1],
-            "fbeta": metrics_train[2]
-        }, fp)
+        json.dump(
+            {
+                "precision": metrics_train[0],
+                "recall": metrics_train[1],
+                "fbeta": metrics_train[2],
+            },
+            fp,
+        )
 
     preds_test = model_utils.inference(model, X_test)
     metrics_test = model_utils.compute_model_metrics(y_test, preds_test)
     with open(metrics_dir / "test_metrics.json", "w") as fp:
-        json.dump({
-            "precision": metrics_test[0],
-            "recall": metrics_test[1],
-            "fbeta": metrics_test[2]
-        }, fp)
+        json.dump(
+            {
+                "precision": metrics_test[0],
+                "recall": metrics_test[1],
+                "fbeta": metrics_test[2],
+            },
+            fp,
+        )
 
     pipeline = Pipeline([("encoder", encoder), ("random_forest", model)])
-    with open(model_dir / "model.pkl", "wb") as fp:
-        pickle.dump(pipeline, fp)
+    model_utils.save(pipeline, model_dir / "model.pkl")
 
 
 if __name__ == "__main__":

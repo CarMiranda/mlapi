@@ -1,3 +1,5 @@
+import pathlib
+import pickle
 import numpy as np
 from numpy import typing as npt
 from sklearn.metrics import fbeta_score, precision_score, recall_score
@@ -67,3 +69,15 @@ def inference(
         Predictions from the model.
     """
     return model.predict(X)
+
+
+def save(model: RandomForestClassifier, model_path: pathlib.Path):
+    with open(model_path, "wb") as fp:
+        pickle.dump(model, fp)
+
+
+def load(model_path: pathlib.Path):
+    with open(model_path, "rb") as fp:
+        model = pickle.load(fp)
+
+    return model
