@@ -128,12 +128,13 @@ def evaluate(
             ) as fp:
                 json.dump(
                     {
-                        "precision": slice_metrics[0],
-                        "recall": slice_metrics[1],
-                        "fbeta": slice_metrics[2],
+                        "precision": metrics[0],
+                        "recall": metrics[1],
+                        "fbeta": metrics[2],
                     },
                     fp,
                 )
+        metrics = {"Overall": metrics}
     else:
         metrics = dict()
         for slice_value in slice_values:
