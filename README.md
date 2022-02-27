@@ -1,3 +1,7 @@
+![Build](https://github.com/CarMiranda/mlapi/actions/workflows/python-app.yml/badge.svg)
+[![codecov](https://codecov.io/gh/CarMiranda/mlapi/branch/main/graph/badge.svg?token=VATZ7Z8DOW)](https://codecov.io/gh/CarMiranda/mlapi)
+
+
 Working in a command line environment is recommended for ease of use with git and dvc. If on Windows, WSL1 or 2 is recommended.
 
 # Environment Set up
