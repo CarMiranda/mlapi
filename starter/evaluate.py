@@ -118,12 +118,9 @@ def evaluate(
         else:
             slice_values = df[slice_key].unique()
 
-    metrics = dict()
-    for slice_value in slice_values:
-        data_slice = data_utils.get_slice_indices(df, slice_key, slice_value)
-
-        slice_metrics = evaluate_pipeline(
-            model, df.drop(["salary"], axis=1), lb.transform(df.salary), data_slice
+    if data_slice is None and slice_key is None:
+        metrics = evaluate_pipeline(
+            model, df.drop(["salary"], axis=1), lb.transform(df.salary)
         )
         if metrics_dir is not None:
             with open(
@@ -137,7 +134,27 @@ def evaluate(
                     },
                     fp,
                 )
-        metrics[slice_value] = slice_metrics
+    else:
+        metrics = dict()
+        for slice_value in slice_values:
+            data_slice = data_utils.get_slice_indices(df, slice_key, slice_value)
+
+            slice_metrics = evaluate_pipeline(
+                model, df.drop(["salary"], axis=1), lb.transform(df.salary), data_slice
+            )
+            if metrics_dir is not None:
+                with open(
+                    metrics_dir / f"{slice_key}_{slice_value}_metrics.json", "w"
+                ) as fp:
+                    json.dump(
+                        {
+                            "precision": slice_metrics[0],
+                            "recall": slice_metrics[1],
+                            "fbeta": slice_metrics[2],
+                        },
+                        fp,
+                    )
+            metrics[slice_value] = slice_metrics
 
     return metrics
 
@@ -147,4 +164,7 @@ if __name__ == "__main__":
     metrics = evaluate(
         args.infile, args.model_dir, args.metrics_dir, args.slice_key, args.slice_value
     )
-    print(json.dumps(metrics, indent=4))
+
+    print(",".join(["Value", "Precision", "Recall", "FBeta"]))
+    for name, (precision, recall, fbeta) in metrics.items():
+        print(",".join([name, f"{precision:.5f}", f"{recall:.5f}", f"{fbeta:.5f}"]))
