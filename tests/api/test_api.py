@@ -1,11 +1,12 @@
 import pytest
 from fastapi.testclient import TestClient
-from starter.api.app import InferenceSchema, app
+from starter.api.models import InferenceSchema
+from starter.api.app import create_app
 
 
 @pytest.fixture
 def client():
-    return TestClient(app)
+    return TestClient(create_app())
 
 
 def test__get(client: TestClient):

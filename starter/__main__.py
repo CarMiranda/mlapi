@@ -1,6 +1,6 @@
-from starter.api.app import app
-import uvicorn
 import os
+import uvicorn
+from starter.api.app import create_app
 
 if "DYNO" in os.environ and os.path.isdir(".dvc"):
     os.system("dvc config core.no_scm true")
@@ -8,6 +8,8 @@ if "DYNO" in os.environ and os.path.isdir(".dvc"):
         exit("dvc pull failed")
     os.system("rm -r .dvc .apt/usr/lib/dvc")
 
+app = create_app()
+
 if __name__ == "__main__":
 
-    uvicorn.run(app)
+    uvicorn.run(app, debug=True)
