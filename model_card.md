@@ -14,15 +14,32 @@ For additional information see the Model Card paper: https://arxiv.org/pdf/1810.
 
 ## Intended Use
 
-Educational purposes.
+The trained model is not expected to be used for other than educational purposes.
 
 ## Training Data
 
-Training data can be found in data/census_clean.csv.
+Training data can be found in data/census_clean.csv. It consists of 14 attributes and 1 target variable:
+- Age
+- Workclass
+- FNLGT
+- Education(-num)
+- Marital status
+- Occupation
+- Relationship
+- Race
+- Sex
+- Capital gain
+- Capital loss
+- Hours (worked) per week
+- Salary (<50K or >=50K)
+
+Data is not stratified during training.
+
+See [this](https://www.kaggle.com/uciml/adult-census-income) for more info.
 
 ## Evaluation Data
 
-Testing data can be found in data/census_clean.csv.
+Testing data can also be found in data/census_clean.csv. 5-fold cross-validation uses the whole dataset for train/validation.
 
 ## Metrics
 Metrics include precision, recall and fbeta. The scores given here are averaged across 5 folds:
@@ -31,6 +48,7 @@ Metrics include precision, recall and fbeta. The scores given here are averaged 
 |-------	|---------------------	|-------------------	|---------------------	|
 | train 	| 0.99995 (± 4e-05)   	| 0.99994 (± 8e-05) 	| 0.99997 (± 6e-05)   	|
 | test  	| 0.67346 (± 0.01006) 	| 0.7325 (± 0.0166) 	| 0.62347 (± 0.01177) 	|
+One can see there is overfitting. Some relevant _slice_ metrics can be found below, so as to assess where the model may overfit.
 
 ### Slice metrics: Race
 
@@ -119,7 +137,8 @@ Metrics include precision, recall and fbeta. The scores given here are averaged 
 
 ## Ethical Considerations
 
-This model should not be used in any serious scenario.
+We can see there is no slice where the model actually favours one of the analyzed traits over another. It would seem the model has just overfitted, more than integrated a trait-based bias.
+In any case, this model should not be used for any serious analysis, as it would most certainly provided wrong results and allow incorrect conclusions.
 
 ## Caveats and Recommendations
-One can see the model seems to overfit, thus it would be necessary to enhance the training procedure in order for the model to generalize better.
+One can see this model overfitted, thus it would be necessary to enhance the training procedure in order for the model to generalize better (e.g. hyperparameter tuning).
