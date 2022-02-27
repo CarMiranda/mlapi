@@ -1,1 +1,1 @@
-{"precision": 1.0, "recall": 1.0, "fbeta": 1.0}
+{"avg_precision": 0.999936472623903, "avg_recall": 0.9999679538535491, "avg_fbeta": 0.9999522094323983, "std_precision": 7.780484810141717e-05, "std_recall": 6.409229290178508e-05, "std_fbeta": 3.9021697224207586e-05}

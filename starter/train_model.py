@@ -4,8 +4,9 @@ import argparse
 import json
 import pathlib
 
+import numpy as np
 import pandas as pd
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import KFold
 from sklearn.pipeline import Pipeline
 
 from starter.ml import data as data_utils
@@ -53,43 +54,65 @@ def train(data_path: pathlib.Path, model_dir: pathlib.Path, metrics_dir: pathlib
     data = pd.read_csv(data_path)
 
     # Optional enhancement, use K-fold cross validation instead of a train-test split.
-    train, test = train_test_split(data, test_size=0.20)
+    kf = KFold()
+    fold_train_metrics = []
+    fold_test_metrics = []
+    for train_idx, test_idx in kf.split(data):
+        train = data.iloc[train_idx]
+        test = data.iloc[test_idx]
 
-    # Process the test data with the process_data function.
-    X_train, y_train, encoder, lb = data_utils.process_data(
-        train, categorical_features=CATEGORICAL_FEATURES, label="salary", training=True
-    )
-    X_test, y_test, _, _ = data_utils.process_data(
-        test,
-        categorical_features=CATEGORICAL_FEATURES,
-        label="salary",
-        training=False,
-        encoder=encoder,
-        lb=lb,
-    )
+        # Process the test data with the process_data function.
+        X_train, y_train, encoder, lb = data_utils.process_data(
+            train,
+            categorical_features=CATEGORICAL_FEATURES,
+            label="salary",
+            training=True,
+        )
 
-    # Train and save a model.
-    model = model_utils.train_model(X_train, y_train)
-    preds_train = model_utils.inference(model, X_train)
-    metrics_train = model_utils.compute_model_metrics(y_train, preds_train)
+        X_test, y_test, _, _ = data_utils.process_data(
+            test,
+            categorical_features=CATEGORICAL_FEATURES,
+            label="salary",
+            training=False,
+            encoder=encoder,
+            lb=lb,
+        )
+
+        # Train and save a model.
+        model = model_utils.train_model(X_train, y_train)
+        preds_train = model_utils.inference(model, X_train)
+        preds_test = model_utils.inference(model, X_test)
+        metrics_train = model_utils.compute_model_metrics(y_train, preds_train)
+        metrics_test = model_utils.compute_model_metrics(y_test, preds_test)
+        fold_train_metrics.append(metrics_train)
+        fold_test_metrics.append(metrics_test)
+
+    metrics_train = np.mean(fold_train_metrics, axis=0)
+    metrics_train_std = np.std(fold_train_metrics, axis=0)
     with open(metrics_dir / "train_metrics.json", "w") as fp:
         json.dump(
             {
-                "precision": metrics_train[0],
-                "recall": metrics_train[1],
-                "fbeta": metrics_train[2],
+                "avg_precision": metrics_train[0],
+                "avg_recall": metrics_train[1],
+                "avg_fbeta": metrics_train[2],
+                "std_precision": metrics_train_std[0],
+                "std_recall": metrics_train_std[1],
+                "std_fbeta": metrics_train_std[2],
             },
             fp,
         )
 
-    preds_test = model_utils.inference(model, X_test)
-    metrics_test = model_utils.compute_model_metrics(y_test, preds_test)
+    metrics_test = np.mean(fold_test_metrics, axis=0)
+    metrics_test_std = np.std(fold_test_metrics, axis=0)
     with open(metrics_dir / "test_metrics.json", "w") as fp:
         json.dump(
             {
-                "precision": metrics_test[0],
-                "recall": metrics_test[1],
-                "fbeta": metrics_test[2],
+                "avg_precision": metrics_test[0],
+                "avg_recall": metrics_test[1],
+                "avg_fbeta": metrics_test[2],
+                "std_precision": metrics_test_std[0],
+                "std_recall": metrics_test_std[1],
+                "std_fbeta": metrics_test_std[2],
             },
             fp,
         )
