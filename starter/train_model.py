@@ -3,7 +3,6 @@
 import argparse
 import json
 import pathlib
-import pickle
 
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -11,6 +10,7 @@ from sklearn.pipeline import Pipeline
 
 from starter.ml import data as data_utils
 from starter.ml import model as model_utils
+from starter.common import CATEGORICAL_FEATURES
 
 
 def get_args():
@@ -55,24 +55,13 @@ def train(data_path: pathlib.Path, model_dir: pathlib.Path, metrics_dir: pathlib
     # Optional enhancement, use K-fold cross validation instead of a train-test split.
     train, test = train_test_split(data, test_size=0.20)
 
-    cat_features = [
-        "workclass",
-        "education",
-        "marital-status",
-        "occupation",
-        "relationship",
-        "race",
-        "sex",
-        "native-country",
-    ]
-
     # Process the test data with the process_data function.
     X_train, y_train, encoder, lb = data_utils.process_data(
-        train, categorical_features=cat_features, label="salary", training=True
+        train, categorical_features=CATEGORICAL_FEATURES, label="salary", training=True
     )
     X_test, y_test, _, _ = data_utils.process_data(
         test,
-        categorical_features=cat_features,
+        categorical_features=CATEGORICAL_FEATURES,
         label="salary",
         training=False,
         encoder=encoder,
