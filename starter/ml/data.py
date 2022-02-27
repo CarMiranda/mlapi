@@ -1,11 +1,23 @@
+from typing import Any
 import numpy as np
+from numpy import typing as npt
+import pandas as pd
 from sklearn.preprocessing import LabelBinarizer, OneHotEncoder
+from sklearn.compose import ColumnTransformer
+
+from starter.common import CATEGORICAL_FEATURES
+
 
 
 def process_data(
-    X, categorical_features=[], label=None, training=True, encoder=None, lb=None
+    X,
+    categorical_features=[],
+    label=None,
+    training=True,
+    encoder: ColumnTransformer = None,
+    lb=None,
 ):
-    """ Process the data used in the machine learning pipeline.
+    """Process the data used in the machine learning pipeline.
 
     Processes the data using one hot encoding for the categorical features and a
     label binarizer for the labels. This can be used in either training or
@@ -25,8 +37,8 @@ def process_data(
         for y (default=None)
     training : bool
         Indicator if training mode or inference/validation mode.
-    encoder : sklearn.preprocessing._encoders.OneHotEncoder
-        Trained sklearn OneHotEncoder, only used if training=False.
+    encoder : sklearn.compose.ColumnTransformer
+        Trained sklearn ColumnTransformer, only used if training=False.
     lb : sklearn.preprocessing._label.LabelBinarizer
         Trained sklearn LabelBinarizer, only used if training=False.
 
@@ -36,8 +48,8 @@ def process_data(
         Processed data.
     y : np.array
         Processed labels if labeled=True, otherwise empty np.array.
-    encoder : sklearn.preprocessing._encoders.OneHotEncoder
-        Trained OneHotEncoder if training is True, otherwise returns the encoder passed
+    encoder : sklearn.compose.ColumnTransformer
+        Trained ColumnTransformer if training is True, otherwise returns the encoder passed
         in.
     lb : sklearn.preprocessing._label.LabelBinarizer
         Trained LabelBinarizer if training is True, otherwise returns the binarizer
@@ -50,21 +62,26 @@ def process_data(
     else:
         y = np.array([])
 
-    X_categorical = X[categorical_features].values
-    X_continuous = X.drop(*[categorical_features], axis=1)
-
     if training is True:
-        encoder = OneHotEncoder(sparse=False, handle_unknown="ignore")
+        encoder = ColumnTransformer(
+            [
+                (
+                    "categories",
+                    OneHotEncoder(dtype="int", sparse=False, handle_unknown="ignore"),
+                    categorical_features,
+                )
+            ],
+            remainder="passthrough",
+        )
         lb = LabelBinarizer()
-        X_categorical = encoder.fit_transform(X_categorical)
+        X = encoder.fit_transform(X)
         y = lb.fit_transform(y.values).ravel()
     else:
-        X_categorical = encoder.transform(X_categorical)
+        X = encoder.transform(X)
         try:
             y = lb.transform(y.values).ravel()
         # Catch the case where y is None because we're doing inference.
         except AttributeError:
             pass
 
-    X = np.concatenate([X_continuous, X_categorical], axis=1)
     return X, y, encoder, lb
