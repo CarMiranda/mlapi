@@ -10,7 +10,7 @@ from starter.ml import data as data_utils
 def df():
     return pd.DataFrame(
         {
-            "A": [1, 2, 3, 4],
+            "A": [1.0, 2.0, 3.0, 4.0],
             "B": ["1", "2", "3", "4"],
             "C": ["yes", "no", "yes", "yes"],
         }
@@ -23,7 +23,7 @@ def test__catlist_label_training(df: pd.DataFrame):
     )
 
     assert np.issubdtype(y.dtype, np.signedinteger)
-    assert np.issubdtype(x.dtype, np.floating)
+    assert np.issubdtype(x.dtype, np.number)
     check_is_fitted(encoder)
     check_is_fitted(lb)
 

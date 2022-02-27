@@ -15,9 +15,9 @@ from starter import train_model
 def training_preprocess():
     df = pd.DataFrame(
         {
-            "A": [1, 2, 3, 4],
-            "B": ["1", "2", "3", "4"],
-            "C": ["yes", "no", "yes", "yes"],
+            "A": list(range(10)),
+            "B": list(map(str, range(10))),
+            "C": ["yes" if i % 2 == 0 else "no" for i in range(10)],
         }
     )
 
@@ -42,15 +42,15 @@ def test__train(training_preprocess):
 def test__full_train():
 
     data = {
-        "workclass": [""] * 4,
-        "education": [""] * 4,
-        "marital-status": [""] * 4,
-        "occupation": [""] * 4,
-        "relationship": [""] * 4,
-        "race": [""] * 4,
-        "sex": [""] * 4,
-        "native-country": [""] * 4,
-        "salary": ["<=1"] * 2 + [">1"] * 2,
+        "workclass": [""] * 10,
+        "education": [""] * 10,
+        "marital-status": [""] * 10,
+        "occupation": [""] * 10,
+        "relationship": [""] * 10,
+        "race": [""] * 10,
+        "sex": [""] * 10,
+        "native-country": [""] * 10,
+        "salary": ["<=1"] * 5 + [">1"] * 5,
     }
     df = pd.DataFrame(data)
     data_path = pathlib.Path(tempfile.mkstemp()[1])
@@ -61,7 +61,7 @@ def test__full_train():
     train_model.train(data_path, model_dir, metrics_dir)
 
     assert len(list(metrics_dir.iterdir())) == 2
-    assert len(list(model_dir.iterdir())) == 1
+    assert len(list(model_dir.iterdir())) == 2
 
     data_path.unlink()
     shutil.rmtree(metrics_dir)
