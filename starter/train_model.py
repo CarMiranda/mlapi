@@ -96,6 +96,7 @@ def train(data_path: pathlib.Path, model_dir: pathlib.Path, metrics_dir: pathlib
 
     pipeline = Pipeline([("encoder", encoder), ("random_forest", model)])
     model_utils.save(pipeline, model_dir / "model.pkl")
+    model_utils.save(lb, model_dir / "label_encoder.pkl")
 
 
 if __name__ == "__main__":
