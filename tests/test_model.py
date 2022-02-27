@@ -24,6 +24,24 @@ def training_preprocess():
     return data_utils.process_data(df, ["B"], "C", training=True)
 
 
+@pytest.fixture
+def raw_data():
+    return pd.DataFrame(
+        {
+            "A": list(range(10)),
+            "B": list(map(str, range(10))),
+            "C": ["yes" if i % 2 == 0 else "no" for i in range(10)],
+        }
+    )
+
+
+def test__slice(raw_data: pd.DataFrame):
+    indices = data_utils.get_slice_indices(raw_data, "C", "yes")
+
+    assert indices.sum() == 5
+    assert raw_data[indices].A.sum() == 20
+
+
 def test__train(training_preprocess):
     x, y, encoder, lb = training_preprocess
 
