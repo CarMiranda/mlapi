@@ -8,6 +8,11 @@ from sklearn.compose import ColumnTransformer
 from starter.common import CATEGORICAL_FEATURES
 
 
+def get_slice_indices(
+    df: pd.DataFrame, column: str, value: Any
+) -> npt.NDArray[np.bool_]:
+    return df[column] == value
+
 
 def process_data(
     X,
