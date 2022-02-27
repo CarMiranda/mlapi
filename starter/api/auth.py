@@ -20,10 +20,11 @@ FAKE_USERS_DB = {
 }
 
 
-def get_user(db, username: str):
+def get_db_user(db, username: str):
     if username in db:
         user_dict = db[username]
         return UserInDB(**user_dict)
+    return None
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token", auto_error=False)
