@@ -14,7 +14,7 @@ from starter.ml import model as model_utils
 from starter.common import CATEGORICAL_FEATURES
 
 
-def get_args():
+def get_args():  # pragma: no cover
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-i", "--infile", type=pathlib.Path, help="Path to input file (clean data)."
